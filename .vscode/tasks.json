@@ -1,0 +1,67 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build1",
+			"type": "shell",
+			"command": "C:/msys64/mingw64/bin/gcc.exe",
+			"args": [
+				"-c",
+				"-o",
+				"${fileBasenameNoExtension}.o",
+				"${file}",
+				"-I\"C:\\msys64\\mingw64\\include\""
+			]
+		},
+		{
+			"label": "Build2",
+			"type": "shell",
+			"command": "C:/msys64/mingw64/bin/gcc.exe",
+			"args": [
+				"-o",
+				"${fileBasenameNoExtension}.exe",
+				"${fileBasenameNoExtension}.o",
+				"-L\"C:\\msys64\\mingw64\\lib\"",
+				"-lfreeglut",
+				"-lopengl32",
+				"-lglu32",
+				"-Wl,--subsystem,windows"
+			],
+			"dependsOn": [
+				"Build1"
+			]
+		},
+		{
+			"label": "Run",
+			"type": "shell",
+			"command": "${fileBasenameNoExtension}.exe",
+			"dependsOn": [
+				"Build2"
+			]
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: gcc.exe arquivo de build ativo",
+			"command": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"-lfreeglut","-lglu32","-lopengl32"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compilador: C:\\msys64\\mingw64\\bin\\gcc.exe"
+		}
+	]
+}
