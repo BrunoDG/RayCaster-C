@@ -5,6 +5,6 @@ As a dream of a child who spent his early teen years playing Wolfenstein 3D, DOO
 
 For any doubts, this is the first understanding of how the code and engine works. I'm following this series on YouTube from 3DSage to make my own Raycaster in C, so then I can move on to Rust and Zig, for studying purposes as well.
 
-(Link to the first video of the "Make your own Raycaster" series on YouTube)[https://www.youtube.com/watch?v=gYRrGTC7GtA]
+[Link to the first video of the "Make your own Raycaster" series on YouTube](https://www.youtube.com/watch?v=gYRrGTC7GtA)
 
 Please go to the channel, watch him and make a thumbs up for that! He deserves it (and no, it's not me, by the way).
