@@ -21,7 +21,7 @@
 
 // Screen Definition
 #define WIDTH 1024
-#define HEIGHT 512
+#define HEIGHT 510
 #define PI 3.1415926535
 #define P2 PI / 2
 #define P3 3 * PI / 2
@@ -87,7 +87,7 @@ int map[] =
         1,
         1,
         0,
-        1,
+        0,
         0,
         0,
         0,
@@ -102,6 +102,28 @@ int map[] =
         1,
         1,
 }; // map drawing
+
+// ------------------ Math Functions ----------------------
+
+float degToRad(float deg)
+{
+    return deg * PI / 180.0;
+}
+
+int FixAng(int a)
+{
+    if (a > 359)
+    {
+        a -= 360;
+    }
+    if (a < 0)
+    {
+        a += 360;
+    }
+    return a;
+}
+
+// ---------------- Draw the map -----------------------------------
 
 void drawMap2D()
 {
@@ -127,6 +149,8 @@ void drawMap2D()
     }
 }
 
+// ------------------ Draw the Player ------------------------------
+
 void drawPlayer() 
 {
     glColor3f(1, 1, 0);
@@ -141,6 +165,43 @@ void drawPlayer()
     glVertex2i(px + pdx * 5, py + pdy * 5);
     glEnd();
 }
+
+void buttons(unsigned char key, int x, int y)
+{
+    if (key == 'a')
+    {
+        pa -= 0.1;
+        if (pa < 0)
+        {
+             pa += 2 * PI;
+        }
+        pdx = cos(pa) * 5;
+        pdy = sin(pa) * 5;
+    }
+    if (key == 'd')
+    {
+        pa += 0.1;
+        if (pa > 2 * PI)
+        {
+             pa -= 2 * PI;
+        }
+        pdx = cos(degToRad(pa)) * 5;
+        pdy = sin(degToRad(pa)) * 5;
+    }
+    if (key == 'w')
+    {
+        px += pdx * 5;
+        py += pdy * 5;
+    }
+    if (key == 's')
+    {
+        px -= pdx * 5;
+        py -= pdy * 5;
+    }
+    glutPostRedisplay();
+}
+
+// ----------------- Draw Rays and Walls --------------------------
 
 float dist(float ax, float ay, float bx, float by, float ang)
 {
@@ -340,43 +401,20 @@ void display()
     glutSwapBuffers();
 }
 
-void buttons(unsigned char key, int x, int y)
+void resize(int w, int h)
 {
-    if (key=='a') {
-        pa -= 0.1;
-        if (pa < 0)
-        {
-             pa += 2 * PI;
-        }
-        pdx = cos(pa) * 5;
-        pdy = sin(pa) * 5;
-    }
-    if (key=='d') {
-        pa += 0.1;
-        if (pa > 2 * PI)
-        {
-             pa -= 2 * PI;
-        }
-        pdx = cos(pa) * 5;
-        pdy = sin(pa) * 5;
-    }
-    if (key=='w') {
-        px += pdx;
-        py += pdy;
-    }
-    if (key == 's') {
-        px -= pdx;
-        py -= pdy;
-    }
-    glutPostRedisplay();
+    glutReshapeWindow(1024, 512);
 }
 
 void init() 
 {
     glClearColor(0.3, 0.3, 0.3, 0);
     gluOrtho2D(0, WIDTH, HEIGHT, 0);
-    px = 300;
-    py = 300;
+    px = 150;
+    py = 400;
+    pa = 90;
+    pdx = cos(degToRad(pa));
+    pdy = -sin(degToRad(pa));
 }
 
 int main(int argc, char* argv[]) 
@@ -384,9 +422,11 @@ int main(int argc, char* argv[])
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(WIDTH, HEIGHT);
+    glutInitWindowPosition(200, 200);
     glutCreateWindow("BevelDrive - Test");
     init();
     glutDisplayFunc(display);
+    glutReshapeFunc(resize);
     glutKeyboardFunc(buttons);
     glutMainLoop();
 }
