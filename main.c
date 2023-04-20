@@ -83,11 +83,81 @@ void drawPlayer()
     glEnd();
 }
 
+void drawRays3D()
+{
+    int r;
+    int mx;
+    int my;
+    int mp;
+    int dof;
+
+    float rx;
+    float ry;
+    float ra;
+    float xo;
+    float yo;
+
+    ra = pa;
+
+    for (r = 0; r < 1; r++)
+    {
+        // ---Check Horizontal Lines---
+        dof = 0;
+        float aTan = -1 / tan(ra); // reverse tangent
+        if (ra > PI)               // looking up
+        {
+             ry = (((int)py >> 6) << 6) - 0.0001; // this divides the value by 64 (bit-shifting on 6 bits) and multiplies by 64 (bit-shifting on 6 bits again)
+             rx = (py - ry) * aTan + px;
+             yo = -64;
+             xo = -yo * aTan;
+        }
+
+        if (ra < PI) // looking down
+        {
+             ry = (((int)py >> 6) << 6) + 64; // this divides the value by 64 (bit-shifting on 6 bits) and multiplies by 64 (bit-shifting on 6 bits again)
+             rx = (py - ry) * aTan + px;
+             yo = 64;
+             xo = -yo * aTan;
+        }
+
+        if (ra == 0 || ra == PI) // looking straight left or right
+        {
+             rx = px;
+             ry = py;
+             dof = 8;
+        }
+
+        while (dof < 8)
+        {
+             mx = (int)(rx) >> 6;
+             my = (int)(ry) >> 6;
+             mp = my * mapX + mx;
+             if (mp < mapX * mapY && map[mp] == 1) // wall hit
+             {
+                dof = 8;
+             }
+             else // next line
+             {
+                rx += xo;
+                ry += yo;
+                dof += 1;
+             }
+        }
+        glColor3f(0, 1, 0);
+        glLineWidth(1);
+        glBegin(GL_LINES);
+        glVertex2i(px, py);
+        glVertex2i(rx, ry);
+        glEnd();
+    }
+}
+
 void display() 
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawMap2D();
     drawPlayer();
+    drawRays3D();
     glutSwapBuffers();
 }
 
