@@ -9,13 +9,7 @@
  * 
  */
 
-// OpenGL Libs
-#include <GL/GL.h>
-#include <GL/GLU.h>
 #include <GL/freeglut.h>
-
-// Libs from C
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
