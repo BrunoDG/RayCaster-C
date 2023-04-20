@@ -23,6 +23,9 @@
 #define WIDTH 1024
 #define HEIGHT 512
 #define PI 3.1415926535
+#define P2 PI / 2
+#define P3 3 * PI / 2
+#define DR 0.0174533 // one degree in radians
 
 float px;   // Player x position
 float py;   // Player y position
@@ -83,7 +86,12 @@ void drawPlayer()
     glEnd();
 }
 
-void drawRays3D()
+float dist(float ax, float ay, float bx, float by, float ang)
+{
+    return (sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay)));
+}
+
+void drawRays2D()
 {
     int r;
     int mx;
@@ -96,13 +104,26 @@ void drawRays3D()
     float ra;
     float xo;
     float yo;
+    float disT;
 
-    ra = pa;
+    ra = pa - DR * 30;
+    if (ra < 0)
+    {
+        ra += 2 * PI;
+    }
 
-    for (r = 0; r < 1; r++)
+    if (ra > 2 * PI)
+    {
+        ra -= 2 * PI;
+    }
+
+    for (r = 0; r < 60; r++) // Field of View (60)
     {
         // ---Check Horizontal Lines---
         dof = 0;
+        float disH = 1000000;
+        float hx = px;
+        float hy = py;
         float aTan = -1 / tan(ra); // reverse tangent
         if (ra > PI)               // looking up
         {
@@ -132,8 +153,11 @@ void drawRays3D()
              mx = (int)(rx) >> 6;
              my = (int)(ry) >> 6;
              mp = my * mapX + mx;
-             if (mp < mapX * mapY && map[mp] == 1) // wall hit
+             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
              {
+                hx = rx;
+                hy = ry;
+                disH = dist(px, py, hx, hy, ra);
                 dof = 8;
              }
              else // next line
@@ -143,12 +167,111 @@ void drawRays3D()
                 dof += 1;
              }
         }
-        glColor3f(0, 1, 0);
-        glLineWidth(1);
+
+        // ---Check Vertical Lines---
+
+        dof = 0;
+        float disV = 1000000;
+        float vx = px;
+        float vy = py;
+        float nTan = -tan(ra);  // reverse tangent
+        if (ra > P2 && ra < P3) // looking left
+        {
+             rx = (((int)px >> 6) << 6) - 0.0001; // this divides the value by 64 (bit-shifting on 6 bits) and multiplies by 64 (bit-shifting on 6 bits again)
+             ry = (px - rx) * nTan + py;
+             xo = -64;
+             yo = -xo * nTan;
+        }
+
+        if (ra < P2 || ra > P3) // looking right
+        {
+             rx = (((int)px >> 6) << 6) + 64; // this divides the value by 64 (bit-shifting on 6 bits) and multiplies by 64 (bit-shifting on 6 bits again)
+             ry = (px - rx) * nTan + py;
+             xo = 64;
+             yo = -xo * nTan;
+        }
+
+        if (ra == 0 || ra == PI) // looking straight up or down
+        {
+             rx = px;
+             ry = py;
+             dof = 8;
+        }
+
+        while (dof < 8)
+        {
+             mx = (int)(rx) >> 6;
+             my = (int)(ry) >> 6;
+             mp = my * mapX + mx;
+             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
+             {
+                vx = rx;
+                vy = ry;
+                disV = dist(px, py, vx, vy, ra);
+                dof = 8;
+             }
+             else // next line
+             {
+                rx += xo;
+                ry += yo;
+                dof += 1;
+             }
+        }
+
+        if (disV < disH)
+        {
+             rx = vx;
+             ry = vy;
+             disT = disV;
+             glColor3f(0.9, 0, 0);
+        }
+
+        if (disH < disV)
+        {
+             rx = hx;
+             ry = hy;
+             disT = disH;
+             glColor3f(0.7, 0, 0);
+        }
+
+        glLineWidth(3);
         glBegin(GL_LINES);
         glVertex2i(px, py);
         glVertex2i(rx, ry);
         glEnd();
+
+        // ---Draw 3D Walls---
+        float ca = pa - ra;
+        if (ca < 0)
+        {
+             ca += 2 * PI;
+        }
+        disT *= cos(ca); // fix fisheye camera
+
+        float lineH = (mapS * 320) / disT; // line height
+        if (lineH > 320)
+        {
+             lineH = 320;
+        }
+
+        float lineO = 160 - lineH / 2; // line offset
+
+        glLineWidth(8);
+        glBegin(GL_LINES);
+        glVertex2i(r * 8 + 530, lineO);
+        glVertex2i(r * 8 + 530, lineH + lineO);
+        glEnd();
+
+        ra += DR;
+        if (ra < 0)
+        {
+             ra += 2 * PI;
+        }
+
+        if (ra > 2 * PI)
+        {
+             ra -= 2 * PI;
+        }
     }
 }
 
@@ -157,7 +280,7 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawMap2D();
     drawPlayer();
-    drawRays3D();
+    drawRays2D();
     glutSwapBuffers();
 }
 
