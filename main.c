@@ -22,6 +22,7 @@
 // Screen Definition
 #define WIDTH 1024
 #define HEIGHT 512
+#define PI 3.1415926535
 
 float px;   // Player x position
 float py;   // Player y position
@@ -74,6 +75,12 @@ void drawPlayer()
     glBegin(GL_POINTS);
     glVertex2i(px, py);
     glEnd();
+
+    glLineWidth(3);
+    glBegin(GL_LINES);
+    glVertex2i(px, py);
+    glVertex2i(px + pdx * 5, py + pdy * 5);
+    glEnd();
 }
 
 void display() 
@@ -87,16 +94,30 @@ void display()
 void buttons(unsigned char key, int x, int y)
 {
     if (key=='a') {
-        px -= 5;
+        pa -= 0.1;
+        if (pa < 0)
+        {
+             pa += 2 * PI;
+        }
+        pdx = cos(pa) * 5;
+        pdy = sin(pa) * 5;
     }
     if (key=='d') {
-        px += 5;
+        pa += 0.1;
+        if (pa > 2 * PI)
+        {
+             pa -= 2 * PI;
+        }
+        pdx = cos(pa) * 5;
+        pdy = sin(pa) * 5;
     }
     if (key=='w') {
-        py -= 5;
+        px += pdx;
+        py += pdy;
     }
     if (key == 's') {
-        py += 5;
+        px -= pdx;
+        py -= pdy;
     }
     glutPostRedisplay();
 }
