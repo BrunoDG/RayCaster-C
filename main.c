@@ -36,16 +36,72 @@ float pa;   // Player angle
 // Map Definition
 int mapX = 8, mapY = 8, mapS = 64;
 int map[] =
-{
-    1,1,1,1,1,1,1,1,
-    1,0,1,0,0,0,0,1,
-    1,0,1,0,0,0,0,1,
-    1,0,1,0,0,0,0,1,
-    1,0,0,0,0,0,0,1,
-    1,0,0,0,0,1,0,1,
-    1,0,0,0,0,0,0,1,
-    1,1,1,1,1,1,1,1,
-};
+    {
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+}; // map drawing
 
 void drawMap2D()
 {
@@ -153,7 +209,7 @@ void drawRays2D()
              mx = (int)(rx) >> 6;
              my = (int)(ry) >> 6;
              mp = my * mapX + mx;
-             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
+             if (mp > 0 && mp < mapX * mapY && map[mp] > 0) // wall hit
              {
                 hx = rx;
                 hy = ry;
@@ -203,7 +259,7 @@ void drawRays2D()
              mx = (int)(rx) >> 6;
              my = (int)(ry) >> 6;
              mp = my * mapX + mx;
-             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
+             if (mp > 0 && mp < mapX * mapY && map[mp] > 0) // wall hit
              {
                 vx = rx;
                 vy = ry;
