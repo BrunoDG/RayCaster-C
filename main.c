@@ -30,94 +30,16 @@ float pa;   // Player angle
 // Map Definition
 int mapX = 8, mapY = 8, mapS = 64;
 int map[] =
-    {
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-}; // map drawing
-
-// ------------------ Math Functions ----------------------
-
-float degToRad(float deg)
 {
-    return deg * PI / 180.0;
-}
-
-int FixAng(int a)
-{
-    if (a > 359)
-    {
-        a -= 360;
-    }
-    if (a < 0)
-    {
-        a += 360;
-    }
-    return a;
-}
-
-// ---------------- Draw the map -----------------------------------
+    1,1,1,1,1,1,1,1,
+    1,0,1,0,0,0,0,1,
+    1,0,1,0,0,0,0,1,
+    1,0,1,0,0,0,0,1,
+    1,0,0,0,0,0,0,1,
+    1,0,0,0,0,1,0,1,
+    1,0,0,0,0,0,0,1,
+    1,1,1,1,1,1,1,1,
+};
 
 void drawMap2D()
 {
@@ -179,8 +101,8 @@ void buttons(unsigned char key, int x, int y)
         {
              pa -= 2 * PI;
         }
-        pdx = cos(degToRad(pa)) * 5;
-        pdy = sin(degToRad(pa)) * 5;
+        pdx = cos(pa) * 5;
+        pdy = sin(pa) * 5;
     }
     if (key == 'w')
     {
@@ -264,7 +186,7 @@ void drawRays2D()
              mx = (int)(rx) >> 6;
              my = (int)(ry) >> 6;
              mp = my * mapX + mx;
-             if (mp > 0 && mp < mapX * mapY && map[mp] > 0) // wall hit
+             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
              {
                 hx = rx;
                 hy = ry;
@@ -314,7 +236,7 @@ void drawRays2D()
              mx = (int)(rx) >> 6;
              my = (int)(ry) >> 6;
              mp = my * mapX + mx;
-             if (mp > 0 && mp < mapX * mapY && map[mp] > 0) // wall hit
+             if (mp > 0 && mp < mapX * mapY && map[mp] == 1) // wall hit
              {
                 vx = rx;
                 vy = ry;
@@ -407,8 +329,8 @@ void init()
     px = 150;
     py = 400;
     pa = 90;
-    pdx = cos(degToRad(pa));
-    pdy = -sin(degToRad(pa));
+    pdx = cos(pa);
+    pdy = -sin(pa);
 }
 
 int main(int argc, char* argv[]) 
